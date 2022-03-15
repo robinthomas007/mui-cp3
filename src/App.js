@@ -1,25 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import * as React from 'react';
+import ThemeProviderComp from './ThemeProvider'
+import Dashboard from './Dashboard'
+import { ColorModeContext } from './ColorModeContext'
+import DataGrid from './DataGrid'
+// const ColorModeContext = React.createContext({ toggleColorMode: () => { } });
 
-function App() {
+export default function ToggleColorMode() {
+
+  const [mode, setMode] = React.useState('light');
+
+  const colorMode = React.useMemo(
+    () => ({
+      toggleColorMode: () => {
+        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+      },
+    }),
+    [],
+  );
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProviderComp mode={mode}>
+        <Dashboard />
+        <DataGrid />
+      </ThemeProviderComp>
+    </ColorModeContext.Provider>
   );
 }
-
-export default App;
