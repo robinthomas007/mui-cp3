@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Stack, Button, FormControl, Typography, MenuItem, Grid } from '@mui/material';
+import { Box, Stack, Button, FormControl, Typography, MenuItem, } from '@mui/material';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -141,8 +141,9 @@ export default function DataGridDemo() {
       </Stack>
       <Box
         sx={{
-          height: 500,
+          minHeight: 500,
           width: '90%',
+          height: 100
         }}>
         <DataGrid
           rows={rows}
@@ -153,6 +154,7 @@ export default function DataGridDemo() {
           // onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
           rowsPerPageOptions={[5, 10, 20]}
           hideFooter={true}
+          autoPageSize
         // components={{
         //   Footer: () => <div>hey a footer</div>,
         // }}
@@ -161,7 +163,7 @@ export default function DataGridDemo() {
       <Button variant="text" endIcon={<KeyboardArrowDownIcon />} sx={{ mt: '20px', color: 'text.primary', textTransform: 'none', fontWeight: 'bold' }}>
         Load More
       </Button>
-    </Box >
+    </Box>
 
   );
 }

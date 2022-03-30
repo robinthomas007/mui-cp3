@@ -1,28 +1,16 @@
-import * as React from 'react';
+import { AuthProvider } from './Context/authContext';
+import { ColorModeProvider } from './Context/ColorModeContext';
 import ThemeProviderComp from './ThemeProvider'
-import Dashboard from './Dashboard'
-import { ColorModeContext } from './ColorModeContext'
-import DataGrid from './DataGrid'
-// const ColorModeContext = React.createContext({ toggleColorMode: () => { } });
+import Router from './Router'
 
-export default function ToggleColorMode() {
-
-  const [mode, setMode] = React.useState('light');
-
-  const colorMode = React.useMemo(
-    () => ({
-      toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
-      },
-    }),
-    [],
-  );
+export default function App() {
   return (
-    <ColorModeContext.Provider value={colorMode}>
-      <ThemeProviderComp mode={mode}>
-        <Dashboard />
-        <DataGrid />
-      </ThemeProviderComp>
-    </ColorModeContext.Provider>
+    <AuthProvider>
+      <ColorModeProvider>
+        <ThemeProviderComp>
+          <Router></Router>
+        </ThemeProviderComp>
+      </ColorModeProvider>
+    </AuthProvider>
   );
 }
