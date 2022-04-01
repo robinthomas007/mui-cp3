@@ -33,6 +33,9 @@ export default function ThemeProviderComp(props) {
     },
     button: {
       primary: '#F5F5F5',
+      '&:hover': {
+        backgroundColor: '#333333'
+      }
     },
     buttonColor: {
       primary: '#000000',
@@ -69,6 +72,9 @@ export default function ThemeProviderComp(props) {
     },
     button: {
       primary: '#333333',
+      '&:hover': {
+        backgroundColor: '#333333'
+      }
     }
   }
 

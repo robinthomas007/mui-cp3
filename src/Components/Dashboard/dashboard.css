@@ -1,0 +1,11 @@
+.icon.editIcon {
+    cursor: pointer;
+}
+
+.css-n3g764-MuiInputBase-root-MuiFilledInput-root:before, .css-n3g764-MuiInputBase-root-MuiFilledInput-root:hover:not(.Mui-disabled):before {
+    border: none;
+}
+
+.css-n3g764-MuiInputBase-root-MuiFilledInput-root:after {
+    border: none;
+}

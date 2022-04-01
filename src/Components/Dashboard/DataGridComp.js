@@ -8,92 +8,120 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Select from '@mui/material/Select';
+import CustomizedDialogs from './createModal'
+import './dashboard.css'
+import { elementAcceptingRef } from '@mui/utils';
 
-
-const columns = [
-  {
-    field: 'track_title',
-    headerName: 'Track Title',
-    flex: 1,
-    headerAlign: 'left',
-    align: 'left',
-  },
-  {
-    field: 'artist',
-    headerName: 'Artist',
-    flex: 1,
-    headerAlign: 'left',
-    align: 'left',
-  },
-  {
-    field: 'isrc',
-    headerName: 'ISRC',
-    flex: 1,
-    headerAlign: 'left',
-    align: 'left',
-  },
-  {
-    field: 'label',
-    headerName: 'Label',
-    sortable: true,
-    flex: 1,
-    headerAlign: 'left',
-    align: 'left',
-  },
-  {
-    field: 'release_date',
-    headerName: 'Release Date',
-    sortable: true,
-    flex: 1,
-    headerAlign: 'left',
-    align: 'left',
-  },
-  {
-    field: 'notes',
-    headerName: 'Notes',
-    sortable: false,
-    flex: 1,
-    headerAlign: 'center',
-    align: 'center',
-    renderCell: (params) => (
-      <QuestionAnswerIcon />
-    ),
-  },
-  {
-    field: 'action',
-    headerName: 'Action',
-    sortable: false,
-    flex: 1,
-    align: 'center',
-    headerAlign: 'center',
-    renderCell: (params) => (
-      <Stack direction="row" spacing={3}>
-        <EditIcon />
-        <DeleteIcon />
-      </Stack>
-    ),
-  },
-];
-
-const rows = [
+const defaultRows = [
   { id: 1, track_title: 'Some Track Title 1', artist: 'Some Artist Name', isrc: '0123456789011', label: 'Universal Music', release_date: '01/01/2022' },
-  { id: 2, track_title: 'Some Track Title 1', artist: 'Some Artist Name', isrc: '0123456789011', label: 'Universal Music', release_date: '01/01/2022' },
-  { id: 3, track_title: 'Some Track Title 1', artist: 'Some Artist Name', isrc: '0123456789011', label: 'Universal Music', release_date: '01/01/2022' },
-  { id: 4, track_title: 'Some Track Title 1', artist: 'Some Artist Name', isrc: '0123456789011', label: 'Universal Music', release_date: '01/01/2022' },
-  { id: 5, track_title: 'Some Track Title 1', artist: 'Some Artist Name', isrc: '0123456789011', label: 'Universal Music', release_date: '01/01/2022' },
-  { id: 6, track_title: 'Some Track Title 1', artist: 'Some Artist Name', isrc: '0123456789011', label: 'Universal Music', release_date: '01/01/2022' },
-  { id: 7, track_title: 'Some Track Title 1', artist: 'Some Artist Name', isrc: '0123456789011', label: 'Universal Music', release_date: '01/01/2022' },
-  { id: 8, track_title: 'Some Track Title 1', artist: 'Some Artist Name', isrc: '0123456789011', label: 'Universal Music', release_date: '01/01/2022' },
-  { id: 9, track_title: 'Some Track Title 1', artist: 'Some Artist Name', isrc: '0123456789011', label: 'Universal Music', release_date: '01/01/2022' },
-  { id: 10, track_title: 'Some Track Title 1', artist: 'Some Artist Name', isrc: '0123456789011', label: 'Universal Music', release_date: '01/01/2022' },
 ];
 
 export default function DataGridDemo() {
 
-  const [age, setAge] = React.useState('10');
+  const columns = [
+    {
+      field: 'track_title',
+      headerName: 'Track Title',
+      flex: 1,
+      headerAlign: 'left',
+      align: 'left',
+    },
+    {
+      field: 'artist',
+      headerName: 'Artist',
+      flex: 1,
+      headerAlign: 'left',
+      align: 'left',
+    },
+    {
+      field: 'isrc',
+      headerName: 'ISRC',
+      flex: 1,
+      headerAlign: 'left',
+      align: 'left',
+    },
+    {
+      field: 'label',
+      headerName: 'Label',
+      sortable: true,
+      flex: 1,
+      headerAlign: 'left',
+      align: 'left',
+    },
+    {
+      field: 'release_date',
+      headerName: 'Release Date',
+      sortable: true,
+      flex: 1,
+      headerAlign: 'left',
+      align: 'left',
+    },
+    {
+      field: 'notes',
+      headerName: 'Notes',
+      sortable: false,
+      flex: 1,
+      headerAlign: 'center',
+      align: 'center',
+      renderCell: (params) => (
+        <QuestionAnswerIcon />
+      ),
+    },
+    {
+      field: 'action',
+      headerName: 'Action',
+      sortable: false,
+      flex: 1,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => (
+        <Stack direction="row" spacing={3}>
+          <EditIcon className="icon editIcon" onClick={(() => editModal(params))} />
+          <DeleteIcon />
+        </Stack>
+      ),
+    },
+  ];
+
+  const [rows, setRows] = React.useState(defaultRows);
+  const [limit, setLimit] = React.useState(10);
+  const [open, setOpen] = React.useState(false);
+  const [param, setParam] = React.useState(null);
+
   const handleChange = (event) => {
-    setAge(event.target.value);
+    setLimit(event.target.value);
   };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+    setParam(null)
+  };
+
+  const editModal = (params) => {
+    setParam(params)
+    handleClickOpen()
+  }
+
+  const addRow = (values) => {
+    setRows([...rows, values]);
+    setOpen(false);
+  }
+
+  const updateRow = (values) => {
+    let updatedRows = rows.map(el => {
+      if (el.id === values.id) {
+        console.log(el, "came", values)
+        return values
+      }
+      return el
+    })
+    setRows(updatedRows);
+    setOpen(false);
+  }
+
   return (
     <Box
       display="flex"
@@ -102,6 +130,13 @@ export default function DataGridDemo() {
       alignItems="center"
       mt='50px'
     >
+      {open && <CustomizedDialogs addRow={addRow}
+        open={open}
+        handleClickOpen={handleClickOpen}
+        param={param}
+        handleClose={handleClose}
+        updateRow={updateRow}
+      />}
       <Stack direction="row" spacing={3}
         sx={{
           display: "flex",
@@ -115,7 +150,7 @@ export default function DataGridDemo() {
             <Select
               labelId="demo-simple-select-autowidth-label"
               id="demo-simple-select-autowidth"
-              value={age}
+              value={limit}
               onChange={handleChange}
               autoWidth
               size='small'
@@ -131,10 +166,10 @@ export default function DataGridDemo() {
           </Typography>
         </FormControl>
         <Stack direction="row" spacing={3}>
-          <Button variant="contained" startIcon={<AddCircleIcon />} sx={{ bgcolor: 'button.primary', color: 'text.primary', borderRadius: '2px' }}>
+          <Button onClick={handleClickOpen} variant="contained" startIcon={<AddCircleIcon />} sx={{ bgcolor: 'button.primary', color: 'text.primary', borderRadius: '2px', '&:hover': { bgcolor: '#ddd' } }}>
             Create
           </Button>
-          <Button variant="contained" endIcon={<FileDownloadIcon />} sx={{ bgcolor: 'button.primary', color: 'text.primary', borderRadius: '2px' }}>
+          <Button variant="contained" endIcon={<FileDownloadIcon />} sx={{ bgcolor: 'button.primary', color: 'text.primary', borderRadius: '2px', '&:hover': { bgcolor: '#ddd' }, }}>
             Export
           </Button>
         </Stack>
