@@ -43,8 +43,7 @@ export default function Header() {
           justifyContent: 'center',
           bgcolor: 'background.header',
           color: '#ffffff',
-          borderRadius: 1,
-          p: 3,
+          pt: 2,
         }}
       >
         <Grid container>
@@ -69,41 +68,6 @@ export default function Header() {
             <Button onClick={handleLogout} variant="text" sx={{ color: 'buttonColor.secondary', textTransform: 'none', fontWeight: 'bold' }}>Logout</Button>
           </Grid>
         </Grid>
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          mb='20px'
-        >
-          <IconButton sx={{
-            bgcolor: 'background.filedBg',
-            borderRadius: '0',
-            p: '10px',
-            mr: 1
-          }} variant="contained" aria-label="settings">
-            <SettingsIcon color="iconColour" />
-          </IconButton>
-          <Box
-            sx={{
-              bgcolor: 'background.filedBg',
-              width: 600,
-              display: 'flex'
-            }}
-          >
-            <IconButton type="submit" sx={{ p: '10px' }} aria-label="search">
-              <SearchIcon color="iconColour" />
-            </IconButton>
-            <InputBase
-              sx={{ ml: 1, borderRadius: '0', width: '100%', color: 'background.textColor', }}
-              inputProps={{}}
-              onChange={handleChange}
-              value={name}
-            />
-            <Button size="small" variant="contained" color='primary'
-              sx={{ borderRadius: '1px', m: '1px', textTransform: 'none', fontWeight: 'bold' }}>
-              Search</Button>
-          </Box>
-        </Box>
       </Box>
     </div>
   );

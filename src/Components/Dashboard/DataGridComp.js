@@ -10,17 +10,16 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Select from '@mui/material/Select';
 import CustomizedDialogs from './createModal'
 import './dashboard.css'
-import { elementAcceptingRef } from '@mui/utils';
+import axios from 'axios';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Pagination from '@mui/material/Pagination';
 
-const defaultRows = [
-  { id: 1, track_title: 'Some Track Title 1', artist: 'Some Artist Name', isrc: '0123456789011', label: 'Universal Music', release_date: '01/01/2022' },
-];
-
-export default function DataGridDemo() {
+export default function DataGridDemo({ searchTerm }) {
 
   const columns = [
     {
-      field: 'track_title',
+      field: 'title',
       headerName: 'Track Title',
       flex: 1,
       headerAlign: 'left',
@@ -49,7 +48,7 @@ export default function DataGridDemo() {
       align: 'left',
     },
     {
-      field: 'release_date',
+      field: 'releaseDate',
       headerName: 'Release Date',
       sortable: true,
       flex: 1,
@@ -57,7 +56,7 @@ export default function DataGridDemo() {
       align: 'left',
     },
     {
-      field: 'notes',
+      field: 'comments',
       headerName: 'Notes',
       sortable: false,
       flex: 1,
@@ -83,13 +82,26 @@ export default function DataGridDemo() {
     },
   ];
 
-  const [rows, setRows] = React.useState(defaultRows);
+  const [rows, setRows] = React.useState([]);
   const [limit, setLimit] = React.useState(10);
   const [open, setOpen] = React.useState(false);
   const [param, setParam] = React.useState(null);
+  const [loading, setLoading] = React.useState(false)
+  const [height, setHeight] = React.useState(578)
+  const [totalPages, setTotalPages] = React.useState()
+
+  const [searchCriteria, setSearchCriteria] = React.useState({
+    searchTerm: "",
+    itemsPerPage: "10",
+    pageNumber: "1",
+    sortColumn: "",
+    sortOrder: "",
+    filter: {}
+  })
 
   const handleChange = (event) => {
     setLimit(event.target.value);
+    setSearchCriteria({ ...searchCriteria, itemsPerPage: event.target.value.toString() })
   };
 
   const handleClickOpen = () => {
@@ -122,6 +134,41 @@ export default function DataGridDemo() {
     setOpen(false);
   }
 
+  React.useEffect(() => {
+    setLoading(true)
+    axios.post(`https://api.dev.cp3.umgapps.com/api/TrackSearch`, { searchCriteria: searchCriteria }, {
+    })
+      .then(res => {
+        setRows(res.data.tracks)
+        setLoading(false)
+        setTotalPages(res.data.totalPages)
+      })
+  }, [searchCriteria, searchTerm])
+
+  React.useEffect(() => {
+    if (searchTerm) {
+      setSearchCriteria({ ...searchCriteria, searchTerm: searchTerm })
+    }
+  }, [searchTerm])
+
+  const onSortModelChange = (data) => {
+    setSearchCriteria({ ...searchCriteria, sortColumn: data[0].field, sortOrder: data[0].sort })
+  }
+
+  const handlePageChange = (e, page) => {
+    setSearchCriteria({ ...searchCriteria, pageNumber: page.toString() })
+  }
+
+  const loadMore = () => {
+    const { itemsPerPage } = searchCriteria
+    const perPage = parseInt(itemsPerPage) + 10
+    setLimit(perPage)
+    if (perPage <= 100) {
+      setSearchCriteria({ ...searchCriteria, itemsPerPage: perPage.toString() })
+      setHeight(578 * perPage / 10)
+    }
+  }
+
   return (
     <Box
       display="flex"
@@ -130,6 +177,12 @@ export default function DataGridDemo() {
       alignItems="center"
       mt='50px'
     >
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       {open && <CustomizedDialogs addRow={addRow}
         open={open}
         handleClickOpen={handleClickOpen}
@@ -155,16 +208,20 @@ export default function DataGridDemo() {
               autoWidth
               size='small'
             >
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
               <MenuItem value={10}>10</MenuItem>
-              <MenuItem value={21}>25</MenuItem>
-              <MenuItem value={22}>50</MenuItem>
+              <MenuItem value={25}>25</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
             </Select>
-            &nbsp;of 250 Results
+            &nbsp;of {totalPages} Results
           </Typography>
         </FormControl>
+        <Pagination
+          count={totalPages ? Number(totalPages) : 0}
+          shape="rounded"
+          color="primary"
+          page={Number(searchCriteria.pageNumber)}
+          onChange={handlePageChange}
+        />
         <Stack direction="row" spacing={3}>
           <Button onClick={handleClickOpen} variant="contained" startIcon={<AddCircleIcon />} sx={{ bgcolor: 'button.primary', color: 'text.primary', borderRadius: '2px', '&:hover': { bgcolor: '#ddd' } }}>
             Create
@@ -176,26 +233,27 @@ export default function DataGridDemo() {
       </Stack>
       <Box
         sx={{
-          minHeight: 500,
           width: '90%',
-          height: 100
+          height: height
         }}>
         <DataGrid
+          sortingMode='server'
+          onSortModelChange={onSortModelChange}
           rows={rows}
+          sortingOrder={['asc', 'desc']}
+          getRowId={(row) => row.trackId}
           columns={columns}
-          pageSize={10}
+          pageSize={limit}
           checkboxSelection
           disableSelectionOnClick
-          // onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-          rowsPerPageOptions={[5, 10, 20]}
+          onPageSizeChange={(newPageSize) => console.log(newPageSize)}
           hideFooter={true}
-          autoPageSize
         // components={{
         //   Footer: () => <div>hey a footer</div>,
         // }}
         />
       </Box>
-      <Button variant="text" endIcon={<KeyboardArrowDownIcon />} sx={{ mt: '20px', color: 'text.primary', textTransform: 'none', fontWeight: 'bold' }}>
+      <Button onClick={loadMore} variant="text" endIcon={<KeyboardArrowDownIcon />} sx={{ mt: '20px', color: 'text.primary', textTransform: 'none', fontWeight: 'bold' }}>
         Load More
       </Button>
     </Box>

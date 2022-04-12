@@ -9,3 +9,11 @@
 .css-n3g764-MuiInputBase-root-MuiFilledInput-root:after {
     border: none;
 }
+
+.css-10d1oc-MuiInputBase-root-MuiFilledInput-root:before, .css-10d1oc-MuiInputBase-root-MuiFilledInput-root:hover:not(.Mui-disabled):before {
+    border: none;
+}
+
+.css-10d1oc-MuiInputBase-root-MuiFilledInput-root:after {
+    border: none;
+}
