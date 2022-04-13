@@ -7,13 +7,15 @@ import { reduxForm, Field } from 'redux-form';
 import { connect } from 'react-redux';
 import CloseIcon from '@mui/icons-material/Close';
 import { Typography } from '@mui/material';
+import DateTimePicker from '../Common/DateTimePicker';
+import IconButton from '@mui/material/IconButton';
 
 const style = {
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 700,
+  width: 750,
   bgcolor: 'background.paper',
   boxShadow: 24,
   p: 4,
@@ -33,10 +35,10 @@ function CustomizedDialogs(props) {
   }
 
   React.useEffect(() => {
-    if (param)
+    if (param) {
       props.initialize(param.row)
+    }
   }, [param]);
-
 
   return (
     <div>
@@ -55,18 +57,20 @@ function CustomizedDialogs(props) {
                 </Typography>
               </Grid>
               <Grid item xs={1}>
-                <CloseIcon onClick={handleClose} sx={{ cursor: 'pointer' }} />
+                <IconButton aria-label="delete" size="small" onClick={handleClose} sx={{ cursor: 'pointer', position: 'absolute', top: '15px', right: '15px' }}>
+                  <CloseIcon fontSize="inherit" sx={{ bgcolor: '#000', color: '#fff', borderRadius: '100px', p: '2px' }} />
+                </IconButton>
               </Grid>
               <Grid item xs={6}>
-                <Field name="track_title" component={TextField} label="Title" />
+                <Field name="title" component={TextField} label="Title" />
                 <Field name="artist" component={TextField} label="Artist" />
                 <Field name="isrc" component={TextField} label="ISRC" />
                 <Field name="label" component={TextField} label="Label" />
                 <Field name="policy" component={TextField} label="Policy" />
               </Grid>
               <Grid item xs={6}>
-                <Field name="leak_date" type="date" component={TextField} label="Leak Date" />
-                <Field name="release_date" type="date" component={TextField} label="Release Date" />
+                <Field name="leakDate" type="date" component={DateTimePicker} label="Leak Date" />
+                <Field name="releaseDate" type="date" component={DateTimePicker} label="Release Date" />
               </Grid>
               <Grid item xs={2}></Grid>
               <Grid item xs={2}>
